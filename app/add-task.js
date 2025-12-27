@@ -24,6 +24,7 @@ import { TaskContext } from '../context/TaskContext';
 import { colors, spacing, borderRadius, typography, categories, priorities } from '../constants/theme';
 import GradientButton from '../components/GradientButton';
 import DatePickerButton from '../components/DatePickerButton';
+import ReminderToggle from '../components/ReminderToggle';
 
 // Safe haptics wrapper for web compatibility
 const safeHaptics = {
@@ -47,6 +48,7 @@ export default function AddTask() {
   const [selectedCategory, setSelectedCategory] = useState('personal');
   const [selectedPriority, setSelectedPriority] = useState('medium');
   const [dueDate, setDueDate] = useState(null);
+  const [enableReminder, setEnableReminder] = useState(false);
 
   const handleSubmit = () => {
     if (!title.trim()) {
@@ -59,6 +61,7 @@ export default function AddTask() {
       category: selectedCategory,
       priority: selectedPriority,
       dueDate: dueDate ? dueDate.toISOString() : null,
+      enableReminder: enableReminder && dueDate !== null,
       completed: false,
       createdAt: new Date().toISOString(),
     });
@@ -168,9 +171,29 @@ export default function AddTask() {
           <Text style={styles.label}>Fecha límite</Text>
           <DatePickerButton 
             value={dueDate}
-            onChange={setDueDate}
+            onChange={(date) => {
+              setDueDate(date);
+              // Auto-enable reminder when date is set
+              if (date && !enableReminder) {
+                setEnableReminder(true);
+              }
+            }}
             placeholder="Agregar fecha límite"
           />
+          
+          {/* Reminder Toggle - only show when date is set */}
+          {dueDate && (
+            <Animated.View
+              style={{ marginTop: spacing.md }}
+              entering={FadeInUp.springify()}
+            >
+              <ReminderToggle 
+                enabled={enableReminder}
+                onToggle={setEnableReminder}
+                label="Recordarme a las 9:00 AM"
+              />
+            </Animated.View>
+          )}
         </Animated.View>
 
         {/* Priority Selection */}
