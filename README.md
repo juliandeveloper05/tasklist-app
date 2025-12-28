@@ -1,50 +1,168 @@
-# Welcome to your Expo app 👋
+📋 Task List App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+⚠️ Work in Progress - This project is currently under active development
 
-## Get started
+A modern, feature-rich task management application built with React Native and Expo. Designed with premium glassmorphism aesthetics and a focus on user experience.
+Mostrar imagen
+Mostrar imagen
+Mostrar imagen
+✨ Key Features
+🎨 Design & UI
 
-1. Install dependencies
+Glassmorphism Design - Modern frosted glass aesthetic with blur effects
+Dark/Light Theme - Seamless theme switching with persistent user preference
+Smooth Animations - Powered by React Native Reanimated for 60fps interactions
+Responsive Layout - Optimized for iOS, Android, and Web platforms
 
-   ```bash
-   npm install
-   ```
+📝 Task Management
 
-2. Start the app
+Smart Categories - Organize tasks by Work, Personal, Shopping, Health, or custom categories
+Priority Levels - High, Medium, Low priority with visual indicators
+Due Dates - Set deadlines with calendar picker and overdue alerts
+Quick Actions - Swipe-to-delete gesture for efficient task removal
+Completion Tracking - Toggle tasks with animated checkboxes
 
-   ```bash
-    npx expo start
-   ```
+🔔 Notifications
 
-In the output, you'll find options to open the app in a
+Local Reminders - Get notified at 9:00 AM on task due dates
+Smart Scheduling - Automatic notification management for incomplete tasks
+Permission Handling - Graceful permission requests for iOS and Android
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+🔍 Search & Filter
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Real-time Search - Find tasks instantly by title or description
+Category Filters - View tasks by specific categories
+Completion Status - Separate views for pending and completed tasks
 
-## Get a fresh project
+📊 Statistics
 
-When you're ready, run:
+Progress Tracking - Visual completion rate with circular progress indicator
+Task Analytics - Quick overview of completed, pending, and urgent tasks
+Category Insights - See task distribution across categories
 
-```bash
-npm run reset-project
-```
+🛠️ Tech Stack
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Framework: React Native with Expo
+Navigation: Expo Router (file-based routing)
+State Management: React Context API
+Animations: React Native Reanimated 3
+Gestures: React Native Gesture Handler
+Storage: AsyncStorage for persistent data
+Notifications: Expo Notifications
+UI Components: Custom components with Ionicons
 
-## Learn more
+📦 Installation
+bash# Clone the repository
+git clone https://github.com/yourusername/tasklist-app.git
 
-To learn more about developing your project with Expo, look at the following resources:
+# Navigate to project directory
+cd tasklist-app
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Install dependencies
+npm install
 
-## Join the community
+# Start the development server
+npx expo start
+🚀 Running the App
+bash# iOS Simulator
+npx expo start --ios
 
-Join our community of developers creating universal apps.
+# Android Emulator
+npx expo start --android
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+# Web Browser
+npx expo start --web
+📱 Project Structure
+tasklist-app/
+├── app/                    # Expo Router screens
+│   ├── index.js           # Home screen
+│   ├── add-task.js        # Add task modal
+│   ├── task-details.js    # Task details screen
+│   └── settings.js        # Settings screen
+├── components/            # Reusable components
+│   ├── TaskCard.js        # Task item component
+│   ├── CategoryFilter.js  # Category chips
+│   ├── StatsWidget.js     # Statistics display
+│   └── ...
+├── context/               # React Context providers
+│   ├── TaskContext.js     # Task state management
+│   └── ThemeContext.js    # Theme management
+├── utils/                 # Utility functions
+│   ├── storage.js         # AsyncStorage helpers
+│   └── notifications.js   # Notification service
+└── constants/             # Theme and configuration
+    └── theme.js           # Design tokens
+🗺️ Roadmap
+Phase 1: Core Features (In Progress)
+
+ Basic task CRUD operations
+ Category system
+ Priority levels
+ Dark/Light theme
+ Local notifications
+ Search functionality
+ Task editing improvements
+ Better error handling
+
+Phase 2: Enhanced Features (Planned)
+
+ Recurring tasks
+ Subtasks support
+ Task notes/descriptions
+ Attachments (images, files)
+ Task sharing
+ Export/Import data (JSON, CSV)
+ Cloud backup integration
+
+Phase 3: Advanced Features (Future)
+
+ Collaboration features
+ Calendar view
+ Time tracking
+ Productivity analytics
+ Widgets support
+ Voice input
+ AI-powered suggestions
+
+Phase 4: Polish & Optimization
+
+ Performance optimizations
+ Accessibility improvements (WCAG compliance)
+ Comprehensive testing suite
+ Internationalization (i18n)
+ App Store deployment
+
+🎯 Current Focus
+Right now, I'm working on:
+
+Notification System - Refining the reminder scheduling logic
+Task Editing - Improving the edit task flow
+Data Persistence - Ensuring all changes are properly saved
+Bug Fixes - Addressing known issues in the issue tracker
+
+🐛 Known Issues
+
+ Date picker modal doesn't close properly on Android in some cases
+ Notification permissions need better error messages
+ Search bar keyboard doesn't dismiss on scroll
+ Theme toggle animation could be smoother
+
+🤝 Contributing
+This is a personal learning project, but I'm open to suggestions! Feel free to:
+
+Open an issue to report bugs
+Suggest new features
+Share feedback on the code structure
+
+📄 License
+This project is open source and available under the MIT License.
+👨‍💻 Author
+Julian Javier Soto
+
+LinkedIn: linkedin.com/in/full-stack-julian-soto
+Instagram: @palee_0x71
+GitHub: @juliandeveloper05
+
+
+⭐ If you found this project interesting, feel free to star it!
+Note: This app is under active development. Features and implementation details are subject to change.
