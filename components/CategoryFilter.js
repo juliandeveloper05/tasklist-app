@@ -1,6 +1,6 @@
 /**
  * CategoryFilter - Horizontal Category Chips
- * Task List App 2026
+ * Task List App 2025
  */
 
 import React from 'react';
@@ -12,11 +12,14 @@ import Animated, {
   withSpring,
   FadeInRight,
 } from 'react-native-reanimated';
-import { colors, spacing, borderRadius, typography, categories } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
+import { spacing, borderRadius, typography, categories } from '../constants/theme';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function CategoryFilter({ selected, onSelect }) {
+  const { colors } = useTheme();
+  
   return (
     <ScrollView 
       horizontal 
@@ -30,13 +33,14 @@ export default function CategoryFilter({ selected, onSelect }) {
           isSelected={selected === category.id}
           onPress={() => onSelect(category.id)}
           delay={index * 50}
+          colors={colors}
         />
       ))}
     </ScrollView>
   );
 }
 
-function CategoryChip({ category, isSelected, onPress, delay }) {
+function CategoryChip({ category, isSelected, onPress, delay, colors }) {
   const scale = useSharedValue(1);
   
   const handlePressIn = () => {
@@ -56,6 +60,7 @@ function CategoryChip({ category, isSelected, onPress, delay }) {
       <AnimatedPressable
         style={[
           styles.chip,
+          { backgroundColor: colors.glassLight, borderColor: colors.glassBorder },
           isSelected && { 
             backgroundColor: category.color + '30',
             borderColor: category.color,
@@ -73,6 +78,7 @@ function CategoryChip({ category, isSelected, onPress, delay }) {
         />
         <Text style={[
           styles.chipText,
+          { color: colors.textSecondary },
           isSelected && { color: category.color }
         ]}>
           {category.name}
@@ -95,9 +101,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.glassLight,
     borderWidth: 1,
-    borderColor: colors.glassBorder,
     marginRight: spacing.sm,
     gap: spacing.xs,
   },
@@ -105,6 +109,6 @@ const styles = StyleSheet.create({
   chipText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
   },
 });
+

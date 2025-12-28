@@ -1,14 +1,19 @@
 /**
  * Header - App Header with Date
- * Task List App 2026
+ * Task List App 2025
  */
 
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { colors, spacing, typography } from '../constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../context/ThemeContext';
+import { spacing, typography } from '../constants/theme';
 
 export default function Header() {
+  const navigation = useNavigation();
+  const { colors } = useTheme();
   const today = new Date();
   const options = { weekday: 'long', day: 'numeric', month: 'long' };
   const formattedDate = today.toLocaleDateString('es-ES', options);
@@ -28,14 +33,18 @@ export default function Header() {
       entering={FadeInDown.delay(100).springify()}
     >
       <View style={styles.textContainer}>
-        <Text style={styles.greeting}>{greeting} 👋</Text>
-        <Text style={styles.date}>{displayDate}</Text>
+        <Text style={[styles.greeting, { color: colors.textSecondary }]}>{greeting} 👋</Text>
+        <Text style={[styles.date, { color: colors.textPrimary }]}>{displayDate}</Text>
       </View>
       
-      {/* Avatar placeholder */}
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>✨</Text>
-      </View>
+      {/* Settings Button */}
+      <TouchableOpacity 
+        style={[styles.settingsButton, { backgroundColor: colors.glassMedium, borderColor: colors.glassBorder }]}
+        onPress={() => navigation.navigate('settings')}
+        activeOpacity={0.7}
+      >
+        <Ionicons name="settings-outline" size={22} color={colors.textPrimary} />
+      </TouchableOpacity>
     </Animated.View>
   );
 }
@@ -57,28 +66,20 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textSecondary,
     marginBottom: spacing.xs,
   },
   
   date: {
     fontSize: typography.fontSize.xxl,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textPrimary,
   },
   
-  avatar: {
+  settingsButton: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: colors.glassMedium,
-    borderWidth: 2,
-    borderColor: colors.accentPurple,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  
-  avatarText: {
-    fontSize: 20,
   },
 });

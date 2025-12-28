@@ -1,6 +1,6 @@
 /**
  * TaskCard - Modern Task Item Component
- * Task List App 2026
+ * Task List App 2025
  * 
  * Features:
  * - Glassmorphism design
@@ -22,11 +22,13 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { colors, spacing, borderRadius, typography, shadows, priorities, categories } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
+import { spacing, borderRadius, typography, shadows, priorities, categories } from '../constants/theme';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function TaskCard({ task, onToggle, onDelete, onPress }) {
+  const { colors } = useTheme();
   const scale = useSharedValue(1);
   const translateX = useSharedValue(0);
   const deleteOpacity = useSharedValue(0);
@@ -131,13 +133,13 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
   return (
     <View style={styles.wrapper}>
       {/* Delete button behind card */}
-      <Animated.View style={[styles.deleteButton, deleteButtonStyle]}>
+      <Animated.View style={[styles.deleteButton, { backgroundColor: colors.error }, deleteButtonStyle]}>
         <Ionicons name="trash" size={24} color={colors.white} />
       </Animated.View>
       
       <GestureDetector gesture={panGesture}>
         <AnimatedPressable
-          style={[styles.container, cardAnimatedStyle]}
+          style={[styles.container, { backgroundColor: colors.glassMedium, borderColor: colors.glassBorder }, cardAnimatedStyle]}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           onPress={onPress}
@@ -154,9 +156,10 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
             >
               <View style={[
                 styles.checkboxOuter,
+                { borderColor: colors.textTertiary },
                 task.completed && { borderColor: colors.success }
               ]}>
-                <Animated.View style={[styles.checkboxInner, checkAnimatedStyle]}>
+                <Animated.View style={[styles.checkboxInner, { backgroundColor: colors.success }, checkAnimatedStyle]}>
                   <Ionicons name="checkmark" size={14} color={colors.white} />
                 </Animated.View>
               </View>
@@ -167,7 +170,8 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
               <Text 
                 style={[
                   styles.title,
-                  task.completed && styles.titleCompleted
+                  { color: colors.textPrimary },
+                  task.completed && { textDecorationLine: 'line-through', color: colors.textTertiary }
                 ]}
                 numberOfLines={2}
               >
@@ -187,7 +191,8 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
                 {dueDateInfo && (
                   <View style={[
                     styles.dueDateContainer,
-                    dueDateInfo.isOverdue && styles.dueDateOverdue
+                    { backgroundColor: colors.accentCyan + '15' },
+                    dueDateInfo.isOverdue && { backgroundColor: colors.error + '15' }
                   ]}>
                     <Ionicons 
                       name={dueDateInfo.isOverdue ? "alert-circle" : "calendar-outline"} 
@@ -196,7 +201,8 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
                     />
                     <Text style={[
                       styles.dueDate,
-                      dueDateInfo.isOverdue && styles.dueDateTextOverdue
+                      { color: colors.accentCyan },
+                      dueDateInfo.isOverdue && { color: colors.error }
                     ]}>
                       {dueDateInfo.text}
                     </Text>
@@ -229,17 +235,14 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     width: 80,
-    backgroundColor: colors.error,
     borderRadius: borderRadius.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   
   container: {
-    backgroundColor: colors.glassMedium,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.glassBorder,
     overflow: 'hidden',
     ...shadows.md,
   },
@@ -270,7 +273,6 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: colors.textTertiary,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
@@ -280,7 +282,6 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.success,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
@@ -294,13 +295,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize.md,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary,
     marginBottom: spacing.xs,
-  },
-  
-  titleCompleted: {
-    textDecorationLine: 'line-through',
-    color: colors.textTertiary,
   },
   
   metaRow: {
@@ -330,21 +325,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.accentCyan + '15',
-  },
-  
-  dueDateOverdue: {
-    backgroundColor: colors.error + '15',
   },
   
   dueDate: {
     fontSize: typography.fontSize.xs,
-    color: colors.accentCyan,
     fontWeight: typography.fontWeight.medium,
-  },
-  
-  dueDateTextOverdue: {
-    color: colors.error,
   },
   
   priorityBadge: {
@@ -355,3 +340,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+

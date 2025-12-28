@@ -1,6 +1,6 @@
 /**
  * StatsWidget - Productivity Statistics
- * Task List App 2026
+ * Task List App 2025
  */
 
 import React from 'react';
@@ -13,9 +13,12 @@ import Animated, {
   withDelay,
   FadeInRight,
 } from 'react-native-reanimated';
-import { colors, spacing, borderRadius, typography } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
+import { spacing, borderRadius, typography } from '../constants/theme';
 
 export default function StatsWidget({ tasks = [] }) {
+  const { colors } = useTheme();
+  
   // Calculate stats
   const totalTasks = tasks.length;
   const completedToday = tasks.filter(t => t.completed).length;
@@ -27,17 +30,18 @@ export default function StatsWidget({ tasks = [] }) {
 
   return (
     <Animated.View 
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.glassMedium, borderColor: colors.glassBorder }]}
       entering={FadeInRight.delay(200).springify()}
     >
       {/* Progress Ring */}
       <View style={styles.progressContainer}>
-        <View style={styles.progressRing}>
+        <View style={[styles.progressRing, { borderColor: colors.glassStrong }]}>
           <View style={[styles.progressFill, { 
+            borderColor: colors.accentPurple,
             transform: [{ rotate: `${(completionRate * 3.6)}deg` }] 
           }]} />
-          <View style={styles.progressCenter}>
-            <Text style={styles.progressPercent}>{completionRate}%</Text>
+          <View style={[styles.progressCenter, { backgroundColor: colors.bgSecondary }]}>
+            <Text style={[styles.progressPercent, { color: colors.textPrimary }]}>{completionRate}%</Text>
           </View>
         </View>
       </View>
@@ -49,6 +53,7 @@ export default function StatsWidget({ tasks = [] }) {
           value={completedToday}
           label="Completadas"
           color={colors.success}
+          colors={colors}
           delay={100}
         />
         <StatItem 
@@ -56,6 +61,7 @@ export default function StatsWidget({ tasks = [] }) {
           value={pending}
           label="Pendientes"
           color={colors.accentCyan}
+          colors={colors}
           delay={200}
         />
         <StatItem 
@@ -63,6 +69,7 @@ export default function StatsWidget({ tasks = [] }) {
           value={highPriorityPending}
           label="Urgentes"
           color={colors.priorityHigh}
+          colors={colors}
           delay={300}
         />
       </View>
@@ -70,7 +77,7 @@ export default function StatsWidget({ tasks = [] }) {
   );
 }
 
-function StatItem({ icon, value, label, color, delay }) {
+function StatItem({ icon, value, label, color, colors, delay }) {
   return (
     <Animated.View 
       style={styles.statItem}
@@ -79,8 +86,8 @@ function StatItem({ icon, value, label, color, delay }) {
       <View style={[styles.statIconContainer, { backgroundColor: color + '20' }]}>
         <Ionicons name={icon} size={18} color={color} />
       </View>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={[styles.statValue, { color: colors.textPrimary }]}>{value}</Text>
+      <Text style={[styles.statLabel, { color: colors.textTertiary }]}>{label}</Text>
     </Animated.View>
   );
 }
@@ -89,10 +96,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.glassMedium,
     borderRadius: borderRadius.xl,
     borderWidth: 1,
-    borderColor: colors.glassBorder,
     padding: spacing.lg,
     marginHorizontal: spacing.lg,
     marginBottom: spacing.xl,
@@ -107,7 +112,6 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     borderWidth: 4,
-    borderColor: colors.glassStrong,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -120,7 +124,6 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     borderWidth: 4,
-    borderColor: colors.accentPurple,
     borderRightColor: 'transparent',
     borderBottomColor: 'transparent',
   },
@@ -129,7 +132,6 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: colors.bgSecondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -137,7 +139,6 @@ const styles = StyleSheet.create({
   progressPercent: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textPrimary,
   },
   
   statsGrid: {
@@ -162,12 +163,11 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textPrimary,
   },
   
   statLabel: {
     fontSize: typography.fontSize.xs,
-    color: colors.textTertiary,
     marginTop: 2,
   },
 });
+

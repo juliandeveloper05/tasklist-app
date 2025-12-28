@@ -1,6 +1,6 @@
 /**
  * FAB - Floating Action Button with Gradient
- * Task List App 2026
+ * Task List App 2025
  */
 
 import React from 'react';
@@ -16,11 +16,13 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { colors, spacing, shadows } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
+import { spacing, shadows } from '../constants/theme';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function FAB({ onPress, icon = 'add', style }) {
+  const { colors } = useTheme();
   const scale = useSharedValue(1);
   const rotation = useSharedValue(0);
   
@@ -79,3 +81,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+

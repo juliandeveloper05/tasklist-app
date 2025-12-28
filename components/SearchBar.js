@@ -1,6 +1,6 @@
 /**
  * SearchBar Component
- * Task List App 2026
+ * Task List App 2025
  * Premium search bar with glassmorphism design
  */
 
@@ -15,12 +15,14 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
-import { colors, spacing, borderRadius, typography } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
+import { spacing, borderRadius, typography } from '../constants/theme';
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function SearchBar({ value, onChangeText, placeholder = 'Buscar tareas...' }) {
   const [isFocused, setIsFocused] = useState(false);
+  const { colors } = useTheme();
 
   const handleClear = () => {
     onChangeText('');
@@ -28,7 +30,11 @@ export default function SearchBar({ value, onChangeText, placeholder = 'Buscar t
   };
 
   return (
-    <View style={[styles.container, isFocused && styles.containerFocused]}>
+    <View style={[
+      styles.container, 
+      { backgroundColor: colors.glassMedium, borderColor: colors.glassBorder },
+      isFocused && { borderColor: colors.accentPurple, backgroundColor: colors.glassStrong }
+    ]}>
       <Ionicons 
         name="search" 
         size={20} 
@@ -37,7 +43,7 @@ export default function SearchBar({ value, onChangeText, placeholder = 'Buscar t
       />
       
       <TextInput
-        style={styles.input}
+        style={[styles.input, { color: colors.textPrimary }]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
@@ -71,7 +77,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.glassMedium,
     marginHorizontal: spacing.xl,
     marginTop: spacing.md,
     marginBottom: spacing.sm,
@@ -79,12 +84,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.glassBorder,
-  },
-
-  containerFocused: {
-    borderColor: colors.accentPurple,
-    backgroundColor: colors.glassStrong,
   },
 
   searchIcon: {
@@ -94,7 +93,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: typography.fontSize.md,
-    color: colors.textPrimary,
     padding: 0,
     margin: 0,
   },
@@ -104,3 +102,4 @@ const styles = StyleSheet.create({
     padding: spacing.xs,
   },
 });
+

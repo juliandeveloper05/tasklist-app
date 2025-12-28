@@ -1,5 +1,5 @@
 /**
- * Home Screen - Task List App 2026
+ * Home Screen - Task List App 2025
  * Modern Premium Design with Glassmorphism
  */
 
@@ -17,7 +17,8 @@ import Animated, { FadeInUp, LinearTransition } from 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { TaskContext } from '../context/TaskContext';
-import { colors, spacing, typography } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
+import { spacing, typography } from '../constants/theme';
 
 // Components
 import Header from '../components/Header';
@@ -30,6 +31,7 @@ import SearchBar from '../components/SearchBar';
 export default function Index() {
   const navigation = useNavigation();
   const { tasks, deleteTask, toggleCompleted, loading } = useContext(TaskContext);
+  const { isDarkMode, colors } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,12 +64,12 @@ export default function Index() {
   // Render task section header
   const renderSectionHeader = (title, count) => (
     <Animated.View 
-      style={styles.sectionHeader}
+      style={[styles.sectionHeader]}
       entering={FadeInUp.springify()}
     >
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.countBadge}>
-        <Text style={styles.countText}>{count}</Text>
+      <Text style={[styles.sectionTitle, { color: colors.textTertiary }]}>{title}</Text>
+      <View style={[styles.countBadge, { backgroundColor: colors.glassMedium }]}>
+        <Text style={[styles.countText, { color: colors.textSecondary }]}>{count}</Text>
       </View>
     </Animated.View>
   );
@@ -79,16 +81,16 @@ export default function Index() {
       entering={FadeInUp.delay(300).springify()}
     >
       <Text style={styles.emptyEmoji}>🎯</Text>
-      <Text style={styles.emptyTitle}>¡Todo listo!</Text>
-      <Text style={styles.emptySubtitle}>
+      <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>¡Todo listo!</Text>
+      <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
         No tienes tareas pendientes.{'\n'}Toca + para agregar una nueva.
       </Text>
     </Animated.View>
   );
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
+    <GestureHandlerRootView style={[styles.container, { backgroundColor: colors.bgPrimary }]}>
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} backgroundColor={colors.bgPrimary} />
       
       {/* Header with greeting */}
       <Header />
