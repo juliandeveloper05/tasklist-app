@@ -122,7 +122,7 @@ export default function Index() {
                 task={item}
                 onToggle={toggleCompleted}
                 onDelete={deleteTask}
-                onPress={() => console.log('Task pressed:', item.id)}
+                onPress={() => navigation.navigate('task-details', { taskId: item.id })}
               />
             </Animated.View>
           </>

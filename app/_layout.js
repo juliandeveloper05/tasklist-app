@@ -22,6 +22,12 @@ export default function Layout() {
             animation: "slide_from_bottom",
           }}
         />
+        <Stack.Screen 
+          name="task-details" 
+          options={{
+            animation: "slide_from_right",
+          }}
+        />
       </Stack>
     </TaskProvider>
   );
