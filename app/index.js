@@ -25,17 +25,29 @@ import StatsWidget from '../components/StatsWidget';
 import CategoryFilter from '../components/CategoryFilter';
 import TaskCard from '../components/TaskCard';
 import FAB from '../components/FAB';
+import SearchBar from '../components/SearchBar';
 
 export default function Index() {
   const navigation = useNavigation();
   const { tasks, deleteTask, toggleCompleted, loading } = useContext(TaskContext);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Filter tasks by category
-  const filteredTasks = selectedCategory === 'all'
+  const categoryFilteredTasks = selectedCategory === 'all'
     ? tasks
     : tasks.filter(task => task.category === selectedCategory);
+
+  // Filter tasks by search query
+  const filteredTasks = searchQuery.trim() === ''
+    ? categoryFilteredTasks
+    : categoryFilteredTasks.filter(task => {
+        const query = searchQuery.toLowerCase();
+        const titleMatch = task.title?.toLowerCase().includes(query);
+        const descriptionMatch = task.description?.toLowerCase().includes(query);
+        return titleMatch || descriptionMatch;
+      });
 
   // Separate completed and pending
   const pendingTasks = filteredTasks.filter(t => !t.completed);
@@ -88,6 +100,13 @@ export default function Index() {
       <CategoryFilter 
         selected={selectedCategory}
         onSelect={setSelectedCategory}
+      />
+      
+      {/* Search Bar */}
+      <SearchBar 
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Buscar tareas..."
       />
       
       {/* Task List */}
