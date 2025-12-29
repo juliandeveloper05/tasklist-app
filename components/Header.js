@@ -37,14 +37,25 @@ export default function Header() {
         <Text style={[styles.date, { color: colors.textPrimary }]}>{displayDate}</Text>
       </View>
       
-      {/* Settings Button */}
-      <TouchableOpacity 
-        style={[styles.settingsButton, { backgroundColor: colors.glassMedium, borderColor: colors.glassBorder }]}
-        onPress={() => router.push('/settings')}
-        activeOpacity={0.7}
-      >
-        <Ionicons name="settings-outline" size={22} color={colors.textPrimary} />
-      </TouchableOpacity>
+      <View style={styles.buttonsContainer}>
+        {/* Stats Button */}
+        <TouchableOpacity 
+          style={[styles.headerButton, { backgroundColor: colors.glassMedium, borderColor: colors.glassBorder }]}
+          onPress={() => router.push('/stats')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="stats-chart" size={22} color={colors.accentPurple} />
+        </TouchableOpacity>
+        
+        {/* Settings Button */}
+        <TouchableOpacity 
+          style={[styles.headerButton, { backgroundColor: colors.glassMedium, borderColor: colors.glassBorder }]}
+          onPress={() => router.push('/settings')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="settings-outline" size={22} color={colors.textPrimary} />
+        </TouchableOpacity>
+      </View>
     </Animated.View>
   );
 }
@@ -74,7 +85,12 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.bold,
   },
   
-  settingsButton: {
+  buttonsContainer: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  
+  headerButton: {
     width: 48,
     height: 48,
     borderRadius: 24,

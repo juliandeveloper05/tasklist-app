@@ -3,7 +3,7 @@
  * Task List App 2026
  */
 
-import React, { createContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useState, useEffect, useCallback, useContext } from "react";
 import { Platform } from "react-native";
 import { loadTasks, saveTasks } from "../utils/storage";
 import {
@@ -11,6 +11,7 @@ import {
   scheduleTaskDueDateNotification,
   cancelNotification,
 } from "../utils/notifications";
+import { StatsContext } from "./StatsContext";
 
 export const TaskContext = createContext();
 
@@ -18,6 +19,9 @@ export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  
+  // Access stats context (may be null during provider nesting)
+  const statsContext = useContext(StatsContext);
 
   // Request notification permissions on mount
   useEffect(() => {
@@ -101,6 +105,11 @@ export const TaskProvider = ({ children }) => {
       await cancelNotification(task.notificationId);
     }
 
+    // Record task completion in stats
+    if (task && !task.completed && statsContext?.recordTaskCompleted) {
+      statsContext.recordTaskCompleted();
+    }
+
     setTasks((prev) =>
       prev.map((task) =>
         task.id === id 
@@ -108,7 +117,7 @@ export const TaskProvider = ({ children }) => {
           : task
       )
     );
-  }, [tasks]);
+  }, [tasks, statsContext]);
 
   /**
    * Update a task

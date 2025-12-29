@@ -6,6 +6,7 @@
 import React, { createContext, useState, useEffect, useCallback, useContext, useRef } from "react";
 import { Platform } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatsContext } from './StatsContext';
 
 export const PomodoroContext = createContext();
 
@@ -43,6 +44,9 @@ export const PomodoroProvider = ({ children }) => {
   
   // Interval ref
   const intervalRef = useRef(null);
+  
+  // Access stats context (may be null during provider nesting)
+  const statsContext = useContext(StatsContext);
 
   // Load saved sessions on mount
   useEffect(() => {
@@ -112,6 +116,11 @@ export const PomodoroProvider = ({ children }) => {
       const newSessionCount = sessionsCompleted + 1;
       setSessionsCompleted(newSessionCount);
       
+      // Record in stats context for historical tracking
+      if (statsContext?.recordPomodoroSession) {
+        statsContext.recordPomodoroSession(25); // 25 minutes per session
+      }
+      
       // Check if it's time for a long break
       if (newSessionCount % SESSIONS_BEFORE_LONG_BREAK === 0) {
         setMode(POMODORO_MODES.LONG_BREAK);
@@ -125,7 +134,7 @@ export const PomodoroProvider = ({ children }) => {
       setMode(POMODORO_MODES.WORK);
       setTimeRemaining(durations.work);
     }
-  }, [mode, sessionsCompleted, durations]);
+  }, [mode, sessionsCompleted, durations, statsContext]);
 
   // Start the timer
   const start = useCallback(() => {
