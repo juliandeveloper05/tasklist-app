@@ -22,8 +22,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { TaskContext } from '../context/TaskContext';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme, colorThemes } from '../context/ThemeContext';
 import { spacing, typography, borderRadius } from '../constants/theme';
+import ColorThemePicker from '../components/ColorThemePicker';
 
 // Setting item component
 const SettingItem = ({ 
@@ -81,7 +82,7 @@ const SectionHeader = ({ title, delay = 0, colors }) => (
 export default function Settings() {
   const router = useRouter();
   const { tasks, notificationsEnabled } = useContext(TaskContext);
-  const { isDarkMode, toggleTheme, colors } = useTheme();
+  const { isDarkMode, toggleTheme, colors, selectedColorTheme } = useTheme();
   
   // Local settings state
   const [hapticFeedback, setHapticFeedback] = useState(true);
@@ -254,15 +255,23 @@ export default function Settings() {
           onSwitchChange={toggleTheme}
         />
 
-        <SettingItem
-          icon="color-palette"
-          iconColor={colors.categoryShopping}
-          title="Tema de color"
-          subtitle="Púrpura"
-          onPress={() => Alert.alert('Próximamente', 'Esta función estará disponible pronto.')}
-          delay={340}
-          colors={colors}
-        />
+        <Animated.View 
+          style={[styles.themePickerCard, { backgroundColor: colors.glassLight, borderColor: colors.glassBorder }]}
+          entering={FadeInUp.delay(340).springify()}
+        >
+          <View style={styles.themePickerHeader}>
+            <View style={[styles.iconContainer, { backgroundColor: `${colors.categoryShopping}20` }]}>
+              <Ionicons name="color-palette" size={22} color={colors.categoryShopping} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>Tema de color</Text>
+              <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>
+                {colorThemes[selectedColorTheme]?.name || 'Púrpura'}
+              </Text>
+            </View>
+          </View>
+          <ColorThemePicker style={styles.colorPicker} />
+        </Animated.View>
 
         <SettingItem
           icon="text"
@@ -625,5 +634,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
+  },
+
+  // Theme Picker Card
+  themePickerCard: {
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+    borderWidth: 1,
+  },
+
+  themePickerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+
+  colorPicker: {
+    marginTop: spacing.xs,
   },
 });

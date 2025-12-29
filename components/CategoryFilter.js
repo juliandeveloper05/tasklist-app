@@ -92,7 +92,9 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.lg,
+    paddingEnd: spacing.xl, // Extra padding to ensure last button is fully visible
     gap: spacing.sm,
+    flexGrow: 0,
   },
   
   chip: {

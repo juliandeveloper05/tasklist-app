@@ -1,5 +1,5 @@
 /**
- * ThemeContext - Dark/Light Mode Management
+ * ThemeContext - Dark/Light Mode + Custom Color Themes
  * Task List App 2025
  */
 
@@ -7,9 +7,92 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const THEME_STORAGE_KEY = '@tasklist_theme';
+const COLOR_THEME_STORAGE_KEY = '@tasklist_color_theme';
 
-// Light mode colors
-export const lightColors = {
+// Color Theme Palettes
+export const colorThemes = {
+  purple: {
+    id: 'purple',
+    name: 'Púrpura',
+    emoji: '🟣',
+    primary: '#A855F7',
+    secondary: '#EC4899',
+    gradientStart: '#667eea',
+    gradientEnd: '#764ba2',
+    accentCyan: '#00D9FF',
+    accentPurple: '#A855F7',
+    accentPink: '#EC4899',
+    accentBlue: '#3B82F6',
+  },
+  ocean: {
+    id: 'ocean',
+    name: 'Océano',
+    emoji: '🔵',
+    primary: '#00D9FF',
+    secondary: '#3B82F6',
+    gradientStart: '#00D9FF',
+    gradientEnd: '#3B82F6',
+    accentCyan: '#00D9FF',
+    accentPurple: '#6366F1',
+    accentPink: '#06B6D4',
+    accentBlue: '#3B82F6',
+  },
+  rose: {
+    id: 'rose',
+    name: 'Rosa',
+    emoji: '🩷',
+    primary: '#EC4899',
+    secondary: '#F43F5E',
+    gradientStart: '#EC4899',
+    gradientEnd: '#F43F5E',
+    accentCyan: '#FB7185',
+    accentPurple: '#EC4899',
+    accentPink: '#F43F5E',
+    accentBlue: '#DB2777',
+  },
+  emerald: {
+    id: 'emerald',
+    name: 'Esmeralda',
+    emoji: '🟢',
+    primary: '#10B981',
+    secondary: '#14B8A6',
+    gradientStart: '#10B981',
+    gradientEnd: '#14B8A6',
+    accentCyan: '#14B8A6',
+    accentPurple: '#10B981',
+    accentPink: '#059669',
+    accentBlue: '#0D9488',
+  },
+  sunset: {
+    id: 'sunset',
+    name: 'Atardecer',
+    emoji: '🟠',
+    primary: '#F59E0B',
+    secondary: '#EF4444',
+    gradientStart: '#F59E0B',
+    gradientEnd: '#EF4444',
+    accentCyan: '#FBBF24',
+    accentPurple: '#F59E0B',
+    accentPink: '#EF4444',
+    accentBlue: '#F97316',
+  },
+  ruby: {
+    id: 'ruby',
+    name: 'Rubí',
+    emoji: '🔴',
+    primary: '#EF4444',
+    secondary: '#EC4899',
+    gradientStart: '#EF4444',
+    gradientEnd: '#EC4899',
+    accentCyan: '#F87171',
+    accentPurple: '#EF4444',
+    accentPink: '#EC4899',
+    accentBlue: '#DC2626',
+  },
+};
+
+// Light mode base colors
+const lightBase = {
   // Backgrounds
   bgPrimary: '#F5F5F7',
   bgSecondary: '#FFFFFF',
@@ -20,16 +103,6 @@ export const lightColors = {
   glassMedium: 'rgba(0, 0, 0, 0.06)',
   glassStrong: 'rgba(0, 0, 0, 0.10)',
   glassBorder: 'rgba(0, 0, 0, 0.08)',
-  
-  // Primary Gradient (Purple to Cyan)
-  gradientStart: '#667eea',
-  gradientEnd: '#764ba2',
-  
-  // Accent Colors
-  accentCyan: '#00B4D8',
-  accentPurple: '#8B5CF6',
-  accentPink: '#DB2777',
-  accentBlue: '#2563EB',
   
   // Priority Colors
   priorityHigh: '#DC2626',
@@ -60,8 +133,8 @@ export const lightColors = {
   overlay: 'rgba(0, 0, 0, 0.3)',
 };
 
-// Dark mode colors (original)
-export const darkColors = {
+// Dark mode base colors
+const darkBase = {
   // Backgrounds
   bgPrimary: '#0A0A0F',
   bgSecondary: '#12121A',
@@ -72,16 +145,6 @@ export const darkColors = {
   glassMedium: 'rgba(255, 255, 255, 0.08)',
   glassStrong: 'rgba(255, 255, 255, 0.12)',
   glassBorder: 'rgba(255, 255, 255, 0.1)',
-  
-  // Primary Gradient (Purple to Cyan)
-  gradientStart: '#667eea',
-  gradientEnd: '#764ba2',
-  
-  // Accent Colors
-  accentCyan: '#00D9FF',
-  accentPurple: '#A855F7',
-  accentPink: '#EC4899',
-  accentBlue: '#3B82F6',
   
   // Priority Colors
   priorityHigh: '#EF4444',
@@ -112,6 +175,10 @@ export const darkColors = {
   overlay: 'rgba(0, 0, 0, 0.5)',
 };
 
+// Legacy exports for backward compatibility
+export const lightColors = { ...lightBase, ...colorThemes.purple };
+export const darkColors = { ...darkBase, ...colorThemes.purple };
+
 export const ThemeContext = createContext();
 
 export const useTheme = () => {
@@ -124,26 +191,34 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [selectedColorTheme, setSelectedColorTheme] = useState('purple');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load saved theme preference
+  // Load saved preferences
   useEffect(() => {
-    const loadTheme = async () => {
+    const loadPreferences = async () => {
       try {
-        const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        const [savedTheme, savedColorTheme] = await Promise.all([
+          AsyncStorage.getItem(THEME_STORAGE_KEY),
+          AsyncStorage.getItem(COLOR_THEME_STORAGE_KEY),
+        ]);
+        
         if (savedTheme !== null) {
           setIsDarkMode(savedTheme === 'dark');
         }
+        if (savedColorTheme !== null && colorThemes[savedColorTheme]) {
+          setSelectedColorTheme(savedColorTheme);
+        }
       } catch (error) {
-        console.error('Error loading theme:', error);
+        console.error('Error loading theme preferences:', error);
       } finally {
         setIsLoading(false);
       }
     };
-    loadTheme();
+    loadPreferences();
   }, []);
 
-  // Save theme preference
+  // Toggle dark/light mode
   const toggleTheme = async () => {
     try {
       const newMode = !isDarkMode;
@@ -154,7 +229,33 @@ export const ThemeProvider = ({ children }) => {
     }
   };
 
-  const colors = isDarkMode ? darkColors : lightColors;
+  // Set color theme
+  const setColorTheme = async (themeName) => {
+    if (!colorThemes[themeName]) return;
+    
+    try {
+      setSelectedColorTheme(themeName);
+      await AsyncStorage.setItem(COLOR_THEME_STORAGE_KEY, themeName);
+    } catch (error) {
+      console.error('Error saving color theme:', error);
+    }
+  };
+
+  // Merge base colors with selected color theme
+  const baseColors = isDarkMode ? darkBase : lightBase;
+  const themeColors = colorThemes[selectedColorTheme] || colorThemes.purple;
+  
+  const colors = {
+    ...baseColors,
+    gradientStart: themeColors.gradientStart,
+    gradientEnd: themeColors.gradientEnd,
+    accentCyan: themeColors.accentCyan,
+    accentPurple: themeColors.accentPurple,
+    accentPink: themeColors.accentPink,
+    accentBlue: themeColors.accentBlue,
+    primary: themeColors.primary,
+    secondary: themeColors.secondary,
+  };
 
   return (
     <ThemeContext.Provider
@@ -163,9 +264,13 @@ export const ThemeProvider = ({ children }) => {
         toggleTheme,
         colors,
         isLoading,
+        selectedColorTheme,
+        setColorTheme,
+        colorThemes,
       }}
     >
       {children}
     </ThemeContext.Provider>
   );
 };
+
