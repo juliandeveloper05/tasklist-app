@@ -3,7 +3,7 @@
  * Task List App 2026
  * 
  * Features:
- * - Animated checkbox
+ * - Animated checkbox with Lottie
  * - Glassmorphism design
  * - Delete button
  */
@@ -20,6 +20,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTheme } from '../context/ThemeContext';
 import { spacing, borderRadius, typography } from '../constants/theme';
+import LottieCheckbox from './LottieCheckbox';
 
 export default function SubtaskItem({ subtask, onToggle, onDelete }) {
   const { colors } = useTheme();
@@ -44,22 +45,14 @@ export default function SubtaskItem({ subtask, onToggle, onDelete }) {
       entering={FadeInRight.springify()}
       exiting={FadeOutRight.springify()}
     >
-      {/* Checkbox */}
-      <TouchableOpacity 
-        style={styles.checkbox} 
-        onPress={handleToggle}
-        activeOpacity={0.7}
-      >
-        <View style={[
-          styles.checkboxOuter,
-          { borderColor: colors.textTertiary },
-          subtask.completed && { borderColor: colors.success }
-        ]}>
-          <Animated.View style={[styles.checkboxInner, { backgroundColor: colors.success }, checkAnimatedStyle]}>
-            <Ionicons name="checkmark" size={12} color={colors.white} />
-          </Animated.View>
-        </View>
-      </TouchableOpacity>
+      {/* Checkbox with Lottie animation */}
+      <View style={styles.checkbox}>
+        <LottieCheckbox
+          checked={subtask.completed}
+          onToggle={handleToggle}
+          size={22}
+        />
+      </View>
 
       {/* Title */}
       <Pressable style={styles.titleContainer} onPress={handleToggle}>

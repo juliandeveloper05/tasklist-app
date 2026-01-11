@@ -5,7 +5,7 @@
  * Features:
  * - Glassmorphism design
  * - Priority indicator with glow
- * - Animated checkbox
+ * - Animated checkbox with Lottie
  * - Swipe to delete
  * - Category badge
  */
@@ -24,6 +24,7 @@ import Animated, {
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTheme } from '../context/ThemeContext';
 import { spacing, borderRadius, typography, shadows, priorities, categories } from '../constants/theme';
+import LottieCheckbox from './LottieCheckbox';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -154,22 +155,14 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
           <View style={[styles.priorityLine, { backgroundColor: priority.color }]} />
           
           <View style={styles.content}>
-            {/* Checkbox */}
-            <TouchableOpacity 
-              style={styles.checkbox} 
-              onPress={handleToggle}
-              activeOpacity={0.7}
-            >
-              <View style={[
-                styles.checkboxOuter,
-                { borderColor: colors.textTertiary },
-                task.completed && { borderColor: colors.success }
-              ]}>
-                <Animated.View style={[styles.checkboxInner, { backgroundColor: colors.success }, checkAnimatedStyle]}>
-                  <Ionicons name="checkmark" size={14} color={colors.white} />
-                </Animated.View>
-              </View>
-            </TouchableOpacity>
+            {/* Checkbox with Lottie animation */}
+            <View style={styles.checkbox}>
+              <LottieCheckbox
+                checked={task.completed}
+                onToggle={handleToggle}
+                size={28}
+              />
+            </View>
             
             {/* Task content */}
             <View style={styles.textContainer}>

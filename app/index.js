@@ -3,7 +3,7 @@
  * Modern Premium Design with Glassmorphism
  */
 
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useState, useContext, useCallback, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,7 @@ import TaskCard from '../components/TaskCard';
 import FAB from '../components/FAB';
 import SearchBar from '../components/SearchBar';
 import PomodoroWidget from '../components/PomodoroWidget';
+import ConfettiCelebration from '../components/ConfettiCelebration';
 
 export default function Index() {
   const router = useRouter();
@@ -36,6 +37,10 @@ export default function Index() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showConfetti, setShowConfetti] = useState(false);
+  
+  // Track previous pending count to detect when all tasks become completed
+  const prevPendingCount = useRef(null);
 
   // Filter tasks by category
   const categoryFilteredTasks = selectedCategory === 'all'
@@ -55,6 +60,27 @@ export default function Index() {
   // Separate completed and pending
   const pendingTasks = filteredTasks.filter(t => !t.completed);
   const completedTasks = filteredTasks.filter(t => t.completed);
+
+  // Detect when all tasks are completed and show confetti
+  useEffect(() => {
+    // Only trigger confetti when:
+    // 1. We had pending tasks before
+    // 2. Now we have 0 pending tasks
+    // 3. We have at least one completed task
+    if (
+      prevPendingCount.current !== null &&
+      prevPendingCount.current > 0 &&
+      pendingTasks.length === 0 &&
+      completedTasks.length > 0
+    ) {
+      setShowConfetti(true);
+    }
+    prevPendingCount.current = pendingTasks.length;
+  }, [pendingTasks.length, completedTasks.length]);
+
+  const handleConfettiComplete = useCallback(() => {
+    setShowConfetti(false);
+  }, []);
 
   // Pull to refresh simulation
   const onRefresh = useCallback(() => {
@@ -156,6 +182,12 @@ export default function Index() {
       
       {/* Floating Action Button */}
       <FAB onPress={() => router.push('/add-task')} />
+      
+      {/* Confetti celebration when all tasks completed */}
+      <ConfettiCelebration 
+        visible={showConfetti} 
+        onComplete={handleConfettiComplete}
+      />
     </GestureHandlerRootView>
   );
 }
