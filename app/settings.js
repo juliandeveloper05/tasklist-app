@@ -25,6 +25,7 @@ import { TaskContext } from '../context/TaskContext';
 import { useTheme, colorThemes } from '../context/ThemeContext';
 import { spacing, typography, borderRadius } from '../constants/theme';
 import ColorThemePicker from '../components/ColorThemePicker';
+import { useAutoSavePreference } from '../hooks/useAutoSave';
 
 // Setting item component
 const SettingItem = ({ 
@@ -89,6 +90,9 @@ export default function Settings() {
   const [soundEffects, setSoundEffects] = useState(true);
   const [autoDeleteCompleted, setAutoDeleteCompleted] = useState(false);
   const [showBadgeCount, setShowBadgeCount] = useState(true);
+  
+  // Auto-save preference (persistent)
+  const { autoSaveEnabled, setAutoSaveEnabled } = useAutoSavePreference();
 
   // Stats
   const totalTasks = tasks.length;
@@ -320,6 +324,18 @@ export default function Settings() {
           isSwitch
           switchValue={autoDeleteCompleted}
           onSwitchChange={setAutoDeleteCompleted}
+        />
+
+        <SettingItem
+          icon="save"
+          iconColor={colors.success}
+          title="Auto-guardado"
+          subtitle="Guardar cambios automáticamente"
+          delay={480}
+          colors={colors}
+          isSwitch
+          switchValue={autoSaveEnabled}
+          onSwitchChange={setAutoSaveEnabled}
         />
 
         {/* Data Section */}

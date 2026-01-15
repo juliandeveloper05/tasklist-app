@@ -58,11 +58,15 @@ export const TaskProvider = ({ children }) => {
    * Add a new task with optional notification
    */
   const addTask = useCallback(async (task) => {
+    const now = new Date().toISOString();
     const newTask = { 
       ...task, 
       id: Date.now().toString(),
       notificationId: null,
       subtasks: task.subtasks || [],
+      description: task.description || '',
+      createdAt: now,
+      updatedAt: now,
     };
 
     // Schedule notification if task has due date and reminder is enabled
@@ -151,7 +155,7 @@ export const TaskProvider = ({ children }) => {
 
     setTasks((prev) =>
       prev.map((task) =>
-        task.id === id ? { ...task, ...updates, notificationId } : task
+        task.id === id ? { ...task, ...updates, notificationId, updatedAt: new Date().toISOString() } : task
       )
     );
   }, [tasks, notificationsEnabled]);
@@ -249,6 +253,46 @@ export const TaskProvider = ({ children }) => {
     };
   }, [tasks]);
 
+  /**
+   * Update a subtask's title
+   */
+  const updateSubtask = useCallback((taskId, subtaskId, updates) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              updatedAt: new Date().toISOString(),
+              subtasks: (task.subtasks || []).map((st) =>
+                st.id === subtaskId ? { ...st, ...updates } : st
+              ),
+            }
+          : task
+      )
+    );
+  }, []);
+
+  /**
+   * Reorder subtasks within a task
+   */
+  const reorderSubtasks = useCallback((taskId, fromIndex, toIndex) => {
+    setTasks((prev) =>
+      prev.map((task) => {
+        if (task.id !== taskId) return task;
+        
+        const subtasks = [...(task.subtasks || [])];
+        const [movedItem] = subtasks.splice(fromIndex, 1);
+        subtasks.splice(toIndex, 0, movedItem);
+        
+        return {
+          ...task,
+          updatedAt: new Date().toISOString(),
+          subtasks,
+        };
+      })
+    );
+  }, []);
+
   return (
     <TaskContext.Provider
       value={{ 
@@ -261,6 +305,8 @@ export const TaskProvider = ({ children }) => {
         addSubtask,
         toggleSubtask,
         deleteSubtask,
+        updateSubtask,
+        reorderSubtasks,
         getSubtaskProgress,
         loading,
         notificationsEnabled,
