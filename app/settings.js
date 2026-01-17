@@ -15,6 +15,7 @@ import {
   Alert,
   Platform,
   Linking,
+  Modal,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
@@ -22,7 +23,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { TaskContext } from '../context/TaskContext';
-import { useTheme, colorThemes } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
+import { useTheme, colorThemes, fontSizeScales } from '../context/ThemeContext';
 import { spacing, typography, borderRadius } from '../constants/theme';
 import ColorThemePicker from '../components/ColorThemePicker';
 import { useAutoSavePreference } from '../hooks/useAutoSave';
@@ -83,7 +85,11 @@ const SectionHeader = ({ title, delay = 0, colors }) => (
 export default function Settings() {
   const router = useRouter();
   const { tasks, notificationsEnabled } = useContext(TaskContext);
-  const { isDarkMode, toggleTheme, colors, selectedColorTheme } = useTheme();
+  const { isDarkMode, toggleTheme, colors, selectedColorTheme, selectedFontSize, setFontSize } = useTheme();
+  const { signOut, user, getDisplayName } = useAuth();
+  
+  // Font size modal state
+  const [fontSizeModalVisible, setFontSizeModalVisible] = useState(false);
   
   // Local settings state
   const [hapticFeedback, setHapticFeedback] = useState(true);
@@ -281,8 +287,8 @@ export default function Settings() {
           icon="text"
           iconColor={colors.categoryWork}
           title="Tamaño de fuente"
-          subtitle="Mediano"
-          onPress={() => Alert.alert('Próximamente', 'Esta función estará disponible pronto.')}
+          subtitle={fontSizeScales[selectedFontSize]?.name || 'Mediano'}
+          onPress={() => setFontSizeModalVisible(true)}
           delay={360}
           colors={colors}
         />
@@ -346,7 +352,7 @@ export default function Settings() {
           iconColor={colors.accentBlue}
           title="Copia de seguridad"
           subtitle="Sincronizar con la nube"
-          onPress={() => Alert.alert('Próximamente', 'Esta función estará disponible pronto.')}
+          onPress={() => router.push('/cloud-backup')}
           delay={520}
           colors={colors}
         />
@@ -428,6 +434,49 @@ export default function Settings() {
           colors={colors}
         />
 
+        {/* Session Section */}
+        <SectionHeader title="SESIÓN" delay={700} colors={colors} />
+        
+        <SettingItem
+          icon="person-circle"
+          iconColor={colors.accentPurple}
+          title={getDisplayName ? getDisplayName() : 'Usuario'}
+          subtitle={user?.email || 'No conectado'}
+          onPress={() => Alert.alert(
+            'Tu cuenta',
+            `Nombre: ${getDisplayName ? getDisplayName() : 'Usuario'}\nEmail: ${user?.email || 'No conectado'}`,
+            [{ text: 'OK' }]
+          )}
+          delay={720}
+          colors={colors}
+        />
+
+        <Animated.View entering={FadeInUp.delay(740).springify()}>
+          <TouchableOpacity 
+            style={[styles.logoutButton, { backgroundColor: colors.error + '15', borderColor: colors.error + '30' }]}
+            onPress={() => {
+              Alert.alert(
+                'Cerrar sesión',
+                '¿Estás seguro de que deseas cerrar sesión?',
+                [
+                  { text: 'Cancelar', style: 'cancel' },
+                  { 
+                    text: 'Cerrar sesión', 
+                    style: 'destructive',
+                    onPress: async () => {
+                      await signOut();
+                    }
+                  }
+                ]
+              );
+            }}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="log-out-outline" size={22} color={colors.error} />
+            <Text style={[styles.logoutText, { color: colors.error }]}>Cerrar sesión</Text>
+          </TouchableOpacity>
+        </Animated.View>
+
         {/* Footer */}
         <Animated.View 
           style={styles.footer}
@@ -464,6 +513,81 @@ export default function Settings() {
           </View>
         </Animated.View>
       </ScrollView>
+
+      {/* Font Size Modal */}
+      <Modal
+        visible={fontSizeModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setFontSizeModalVisible(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setFontSizeModalVisible(false)}
+        >
+          <Animated.View
+            entering={FadeInUp.springify()}
+            style={[styles.fontSizeModalContent, { backgroundColor: colors.bgSecondary, borderColor: colors.glassBorder }]}
+          >
+            <Text style={[styles.fontSizeModalTitle, { color: colors.textPrimary }]}>Tamaño de fuente</Text>
+            <Text style={[styles.fontSizeModalSubtitle, { color: colors.textSecondary }]}>Ajusta el tamaño del texto en tus tareas</Text>
+            
+            <View style={styles.fontSizeOptions}>
+              {Object.values(fontSizeScales).map((sizeOption) => (
+                <TouchableOpacity
+                  key={sizeOption.id}
+                  style={[
+                    styles.fontSizeOption,
+                    { 
+                      backgroundColor: selectedFontSize === sizeOption.id ? colors.accentPurple + '20' : colors.glassLight,
+                      borderColor: selectedFontSize === sizeOption.id ? colors.accentPurple : colors.glassBorder,
+                    }
+                  ]}
+                  onPress={() => {
+                    setFontSize(sizeOption.id);
+                    setFontSizeModalVisible(false);
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[
+                    styles.fontSizeOptionText,
+                    { 
+                      fontSize: sizeOption.id === 'small' ? 14 : sizeOption.id === 'large' ? 20 : 17,
+                      color: selectedFontSize === sizeOption.id ? colors.accentPurple : colors.textPrimary,
+                      fontWeight: selectedFontSize === sizeOption.id ? '700' : '500',
+                    }
+                  ]}>
+                    {sizeOption.name}
+                  </Text>
+                  <Text style={[
+                    styles.fontSizePreview,
+                    { 
+                      fontSize: sizeOption.id === 'small' ? 11 : sizeOption.id === 'large' ? 15 : 13,
+                      color: colors.textSecondary,
+                    }
+                  ]}>
+                    Aa Bb Cc
+                  </Text>
+                  {selectedFontSize === sizeOption.id && (
+                    <View style={[styles.fontSizeCheck, { backgroundColor: colors.accentPurple }]}>
+                      <Ionicons name="checkmark" size={14} color={colors.white} />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity
+              style={[styles.fontSizeCloseButton, { backgroundColor: colors.glassMedium }]}
+              onPress={() => setFontSizeModalVisible(false)}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.fontSizeCloseText, { color: colors.textPrimary }]}>Cerrar</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -668,5 +792,94 @@ const styles = StyleSheet.create({
 
   colorPicker: {
     marginTop: spacing.xs,
+  },
+
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.lg,
+    marginHorizontal: spacing.xl,
+    marginTop: spacing.md,
+    marginBottom: spacing.lg,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    gap: spacing.sm,
+  },
+
+  logoutText: {
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.semibold,
+  },
+
+  // Font Size Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+
+  fontSizeModalContent: {
+    width: '100%',
+    maxWidth: 360,
+    borderRadius: borderRadius.xl,
+    padding: spacing.xl,
+    borderWidth: 1,
+  },
+
+  fontSizeModalTitle: {
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold,
+    textAlign: 'center',
+    marginBottom: spacing.xs,
+  },
+
+  fontSizeModalSubtitle: {
+    fontSize: typography.fontSize.sm,
+    textAlign: 'center',
+    marginBottom: spacing.xl,
+  },
+
+  fontSizeOptions: {
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
+  },
+
+  fontSizeOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1.5,
+  },
+
+  fontSizeOptionText: {
+    flex: 1,
+  },
+
+  fontSizePreview: {
+    marginRight: spacing.sm,
+    opacity: 0.7,
+  },
+
+  fontSizeCheck: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  fontSizeCloseButton: {
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.lg,
+    alignItems: 'center',
+  },
+
+  fontSizeCloseText: {
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.semibold,
   },
 });

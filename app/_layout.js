@@ -1,14 +1,44 @@
 import { Stack } from "expo-router";
+import { View, ActivityIndicator } from "react-native";
 import { TaskProvider } from "../context/TaskContext";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { PomodoroProvider } from "../context/PomodoroContext";
 import { StatsProvider } from "../context/StatsContext";
+import { AuthProvider, useAuth } from "../context/AuthContext";
 import { StatusBar } from "expo-status-bar";
+import AuthScreen from "./auth";
 
-// Inner component that uses theme context
+// Loading screen while checking auth
+function LoadingScreen() {
+  const { colors } = useTheme();
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bgPrimary }}>
+      <ActivityIndicator size="large" color={colors.accentPurple} />
+    </View>
+  );
+}
+
+// Inner component that uses theme context and checks auth
 function RootLayoutNav() {
   const { isDarkMode, colors } = useTheme();
+  const auth = useAuth();
 
+  // Show loading while checking auth state
+  if (auth.loading) {
+    return <LoadingScreen />;
+  }
+
+  // Show auth screen if not authenticated
+  if (!auth.isAuthenticated) {
+    return (
+      <>
+        <StatusBar style={isDarkMode ? "light" : "dark"} />
+        <AuthScreen />
+      </>
+    );
+  }
+
+  // Show main app if authenticated
   return (
     <>
       <StatusBar style={isDarkMode ? "light" : "dark"} />
@@ -51,22 +81,42 @@ function RootLayoutNav() {
             animation: "slide_from_right",
           }}
         />
+        <Stack.Screen 
+          name="data-management" 
+          options={{
+            animation: "slide_from_right",
+          }}
+        />
+        <Stack.Screen 
+          name="cloud-backup" 
+          options={{
+            animation: "slide_from_right",
+          }}
+        />
+        <Stack.Screen 
+          name="auth" 
+          options={{
+            animation: "fade",
+          }}
+        />
       </Stack>
     </>
   );
 }
 
-// Main layout that provides theme context
+// Main layout that provides all contexts
 export default function Layout() {
   return (
     <ThemeProvider>
-      <StatsProvider>
-        <PomodoroProvider>
-          <TaskProvider>
-            <RootLayoutNav />
-          </TaskProvider>
-        </PomodoroProvider>
-      </StatsProvider>
+      <AuthProvider>
+        <StatsProvider>
+          <PomodoroProvider>
+            <TaskProvider>
+              <RootLayoutNav />
+            </TaskProvider>
+          </PomodoroProvider>
+        </StatsProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

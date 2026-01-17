@@ -9,6 +9,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { Platform } from 'react-native';
 
 const DEFAULT_MAX_HISTORY = 10;
 
@@ -122,7 +123,8 @@ export function useHistory(initialValue, options = {}) {
  */
 export function useUndoRedoKeyboard(onUndo, onRedo, enabled = true) {
   useEffect(() => {
-    if (!enabled || typeof window === 'undefined') return;
+    // Only run on web - window.addEventListener doesn't work on mobile
+    if (!enabled || Platform.OS !== 'web') return;
 
     const handleKeyDown = (e) => {
       // Check for Ctrl/Cmd + Z (undo) or Ctrl/Cmd + Shift + Z (redo)

@@ -1,6 +1,6 @@
 /**
- * Header - App Header with Date
- * Task List App 2025
+ * Header - App Header with Personalized Greeting
+ * Bitrova 2026
  */
 
 import React from 'react';
@@ -9,11 +9,14 @@ import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { spacing, typography } from '../constants/theme';
 
 export default function Header() {
   const router = useRouter();
   const { colors } = useTheme();
+  const { user, getDisplayName } = useAuth();
+  
   const today = new Date();
   const options = { weekday: 'long', day: 'numeric', month: 'long' };
   const formattedDate = today.toLocaleDateString('es-ES', options);
@@ -21,11 +24,14 @@ export default function Header() {
   // Capitalize first letter
   const displayDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
   
-  // Get greeting based on time
+  // Get greeting based on time of day
   const hour = today.getHours();
   let greeting = 'Buenos días';
   if (hour >= 12 && hour < 18) greeting = 'Buenas tardes';
   if (hour >= 18) greeting = 'Buenas noches';
+  
+  // Get user's first name
+  const userName = getDisplayName ? getDisplayName().split(' ')[0] : '';
 
   return (
     <Animated.View 
@@ -33,7 +39,9 @@ export default function Header() {
       entering={FadeInDown.delay(100).springify()}
     >
       <View style={styles.textContainer}>
-        <Text style={[styles.greeting, { color: colors.textSecondary }]}>{greeting} 👋</Text>
+        <Text style={[styles.greeting, { color: colors.textSecondary }]}>
+          {greeting}{userName ? `, ${userName}` : ''} 👋
+        </Text>
         <Text style={[styles.date, { color: colors.textPrimary }]}>{displayDate}</Text>
       </View>
       

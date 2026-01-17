@@ -30,7 +30,7 @@ import LottieCheckbox from './LottieCheckbox';
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function TaskCard({ task, onToggle, onDelete, onPress }) {
-  const { colors } = useTheme();
+  const { colors, getFontSize } = useTheme();
   const router = useRouter();
   const scale = useSharedValue(1);
   const translateX = useSharedValue(0);
@@ -171,7 +171,7 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
               <Text 
                 style={[
                   styles.title,
-                  { color: colors.textPrimary },
+                  { color: colors.textPrimary, fontSize: getFontSize(typography.fontSize.md) },
                   task.completed && { textDecorationLine: 'line-through', color: colors.textTertiary }
                 ]}
                 numberOfLines={2}
@@ -183,7 +183,7 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
                 {/* Category badge */}
                 <View style={[styles.categoryBadge, { backgroundColor: category.color + '20' }]}>
                   <Ionicons name={category.icon} size={10} color={category.color} />
-                  <Text style={[styles.categoryText, { color: category.color }]}>
+                  <Text style={[styles.categoryText, { color: category.color, fontSize: getFontSize(typography.fontSize.xs) }]}>
                     {category.name}
                   </Text>
                 </View>
@@ -202,7 +202,7 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
                     />
                     <Text style={[
                       styles.dueDate,
-                      { color: colors.accentCyan },
+                      { color: colors.accentCyan, fontSize: getFontSize(typography.fontSize.xs) },
                       dueDateInfo.isOverdue && { color: colors.error }
                     ]}>
                       {dueDateInfo.text}
@@ -217,7 +217,7 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
                     { backgroundColor: colors.accentPurple + '15' }
                   ]}>
                     <Ionicons name="list-outline" size={12} color={colors.accentPurple} />
-                    <Text style={[styles.subtasksText, { color: colors.accentPurple }]}>
+                    <Text style={[styles.subtasksText, { color: colors.accentPurple, fontSize: getFontSize(typography.fontSize.xs) }]}>
                       {subtaskCompleted}/{subtaskTotal}
                     </Text>
                   </View>
@@ -245,7 +245,7 @@ export default function TaskCard({ task, onToggle, onDelete, onPress }) {
                     />
                     <Text style={[
                       styles.recurringText, 
-                      { color: colors.accentCyan },
+                      { color: colors.accentCyan, fontSize: getFontSize(typography.fontSize.xs) },
                       task.skipped && { color: colors.warning }
                     ]}>
                       {task.skipped ? 'Saltada' : 'Recurrente'}
@@ -337,7 +337,6 @@ const styles = StyleSheet.create({
   },
   
   title: {
-    fontSize: typography.fontSize.md,
     fontWeight: typography.fontWeight.medium,
     marginBottom: spacing.xs,
   },
@@ -358,7 +357,6 @@ const styles = StyleSheet.create({
   },
   
   categoryText: {
-    fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.medium,
   },
   
@@ -372,7 +370,6 @@ const styles = StyleSheet.create({
   },
   
   dueDate: {
-    fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.medium,
   },
   
@@ -386,7 +383,6 @@ const styles = StyleSheet.create({
   },
   
   subtasksText: {
-    fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.medium,
   },
   
@@ -408,7 +404,6 @@ const styles = StyleSheet.create({
   },
   
   recurringText: {
-    fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.medium,
   },
 });

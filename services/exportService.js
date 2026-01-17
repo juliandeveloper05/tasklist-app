@@ -85,7 +85,7 @@ export const exportToJSON = (tasks, options = {}) => {
   const exportData = {
     version: EXPORT_VERSION,
     exportDate: new Date().toISOString(),
-    appName: 'TaskList App',
+    appName: 'Bitrova',
     tasks: exportTasks,
     metadata: {
       totalTasks: exportTasks.length,
@@ -268,7 +268,7 @@ export const saveAndShareExport = async (content, format) => {
     // Mobile: Save to file and share
     const fileUri = FileSystem.cacheDirectory + filename;
     await FileSystem.writeAsStringAsync(fileUri, content, {
-      encoding: FileSystem.EncodingType.UTF8,
+      encoding: 'utf8',
     });
 
     const isAvailable = await Sharing.isAvailableAsync();

@@ -16,7 +16,7 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
-import Animated, { FadeIn, SlideInDown, SlideOutDown } from 'react-native-reanimated';
+import Animated, { FadeIn, SlideInDown, SlideOutDown, Easing } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useTheme } from '../context/ThemeContext';
@@ -69,103 +69,113 @@ export default function AttachmentPicker({
       transparent
       animationType="none"
       onRequestClose={onClose}
+      statusBarTranslucent
     >
-      <Pressable style={styles.backdrop} onPress={onClose}>
-        <Animated.View 
-          entering={FadeIn.duration(200)}
-          style={StyleSheet.absoluteFill}
-        >
-          <BlurView
-            intensity={isDarkMode ? 40 : 60}
-            tint={isDarkMode ? 'dark' : 'light'}
+      <View style={styles.modalContainer}>
+        {/* Backdrop overlay */}
+        <Pressable style={styles.backdrop} onPress={onClose}>
+          <Animated.View 
+            entering={FadeIn.duration(200)}
             style={StyleSheet.absoluteFill}
-          />
-        </Animated.View>
-      </Pressable>
+          >
+            <BlurView
+              intensity={isDarkMode ? 40 : 60}
+              tint={isDarkMode ? 'dark' : 'light'}
+              style={StyleSheet.absoluteFill}
+            />
+          </Animated.View>
+        </Pressable>
 
-      <Animated.View
-        entering={SlideInDown.springify().damping(15)}
-        exiting={SlideOutDown.springify()}
-        style={[
-          styles.sheet,
-          { backgroundColor: colors.bgSecondary, borderColor: colors.glassBorder },
-        ]}
-      >
-        {/* Handle bar */}
-        <View style={[styles.handleBar, { backgroundColor: colors.glassMedium }]} />
+        {/* Sheet content */}
+        <Animated.View
+          entering={SlideInDown.duration(250).easing(Easing.out(Easing.cubic))}
+          exiting={SlideOutDown.duration(200)}
+          style={[
+            styles.sheet,
+            { backgroundColor: colors.bgSecondary, borderColor: colors.glassBorder },
+          ]}
+        >
+          {/* Handle bar */}
+          <View style={[styles.handleBar, { backgroundColor: colors.glassMedium }]} />
 
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.textPrimary }]}>
-            Adjuntar archivo
-          </Text>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            Máximo 10MB por archivo
-          </Text>
-        </View>
-
-        {/* Loading overlay */}
-        {isLoading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color={colors.accentPurple} />
-            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-              Procesando archivo...
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: colors.textPrimary }]}>
+              Adjuntar archivo
+            </Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+              Máximo 10MB por archivo
             </Text>
           </View>
-        )}
 
-        {/* Options */}
-        {!isLoading && (
-          <View style={styles.options}>
-            {Platform.OS !== 'web' && (
+          {/* Loading overlay */}
+          {isLoading && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color={colors.accentPurple} />
+              <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+                Procesando archivo...
+              </Text>
+            </View>
+          )}
+
+          {/* Options */}
+          {!isLoading && (
+            <View style={styles.options}>
+              {Platform.OS !== 'web' && (
+                <AttachmentOption
+                  icon="camera"
+                  title="Tomar foto"
+                  subtitle="Usar la cámara"
+                  onPress={() => handleOptionPress(onTakePhoto)}
+                  color={colors.accentPink}
+                  colors={colors}
+                />
+              )}
+
               <AttachmentOption
-                icon="camera"
-                title="Tomar foto"
-                subtitle="Usar la cámara del dispositivo"
-                onPress={() => handleOptionPress(onTakePhoto)}
-                color={colors.accentPink}
+                icon="image"
+                title="Elegir de galería"
+                subtitle="Seleccionar imagen"
+                onPress={() => handleOptionPress(onPickImage)}
+                color={colors.accentPurple}
                 colors={colors}
               />
-            )}
 
-            <AttachmentOption
-              icon="image"
-              title="Elegir de galería"
-              subtitle="Seleccionar una imagen existente"
-              onPress={() => handleOptionPress(onPickImage)}
-              color={colors.accentPurple}
-              colors={colors}
-            />
+              <AttachmentOption
+                icon="document"
+                title="Documento"
+                subtitle="PDF, Word, texto"
+                onPress={() => handleOptionPress(onPickDocument)}
+                color={colors.accentCyan}
+                colors={colors}
+              />
+            </View>
+          )}
 
-            <AttachmentOption
-              icon="document"
-              title="Seleccionar documento"
-              subtitle="PDF, Word, texto"
-              onPress={() => handleOptionPress(onPickDocument)}
-              color={colors.accentCyan}
-              colors={colors}
-            />
-          </View>
-        )}
-
-        {/* Cancel button */}
-        <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: colors.glassMedium }]}
-          onPress={onClose}
-        >
-          <Text style={[styles.cancelText, { color: colors.textPrimary }]}>
-            Cancelar
-          </Text>
-        </TouchableOpacity>
-      </Animated.View>
+          {/* Cancel button */}
+          <TouchableOpacity
+            style={[styles.cancelButton, { backgroundColor: colors.glassMedium }]}
+            onPress={onClose}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.cancelText, { color: colors.textPrimary }]}>
+              Cancelar
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
+  },
+
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
   },
 
   sheet: {

@@ -541,7 +541,7 @@ export default function DataManagement() {
                     💡 Consejos de importación
                   </Text>
                   <Text style={[styles.tipsText, { color: colors.textSecondary }]}>
-                    • Usa archivos exportados de TaskList App para mejores resultados
+                    • Usa archivos exportados de Bitrova para mejores resultados
                   </Text>
                   <Text style={[styles.tipsText, { color: colors.textSecondary }]}>
                     • Los archivos CSV deben tener columna "Title" o "Título"

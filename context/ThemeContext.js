@@ -8,6 +8,26 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const THEME_STORAGE_KEY = '@tasklist_theme';
 const COLOR_THEME_STORAGE_KEY = '@tasklist_color_theme';
+const FONT_SIZE_STORAGE_KEY = '@tasklist_font_size';
+
+// Font Size Scales
+export const fontSizeScales = {
+  small: {
+    id: 'small',
+    name: 'Pequeño',
+    scale: 0.85,
+  },
+  medium: {
+    id: 'medium',
+    name: 'Mediano',
+    scale: 1.0,
+  },
+  large: {
+    id: 'large',
+    name: 'Grande',
+    scale: 1.15,
+  },
+};
 
 // Color Theme Palettes
 export const colorThemes = {
@@ -192,15 +212,17 @@ export const useTheme = () => {
 export const ThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [selectedColorTheme, setSelectedColorTheme] = useState('purple');
+  const [selectedFontSize, setSelectedFontSize] = useState('medium');
   const [isLoading, setIsLoading] = useState(true);
 
   // Load saved preferences
   useEffect(() => {
     const loadPreferences = async () => {
       try {
-        const [savedTheme, savedColorTheme] = await Promise.all([
+        const [savedTheme, savedColorTheme, savedFontSize] = await Promise.all([
           AsyncStorage.getItem(THEME_STORAGE_KEY),
           AsyncStorage.getItem(COLOR_THEME_STORAGE_KEY),
+          AsyncStorage.getItem(FONT_SIZE_STORAGE_KEY),
         ]);
         
         if (savedTheme !== null) {
@@ -208,6 +230,9 @@ export const ThemeProvider = ({ children }) => {
         }
         if (savedColorTheme !== null && colorThemes[savedColorTheme]) {
           setSelectedColorTheme(savedColorTheme);
+        }
+        if (savedFontSize !== null && fontSizeScales[savedFontSize]) {
+          setSelectedFontSize(savedFontSize);
         }
       } catch (error) {
         console.error('Error loading theme preferences:', error);
@@ -241,6 +266,24 @@ export const ThemeProvider = ({ children }) => {
     }
   };
 
+  // Set font size
+  const setFontSize = async (sizeName) => {
+    if (!fontSizeScales[sizeName]) return;
+    
+    try {
+      setSelectedFontSize(sizeName);
+      await AsyncStorage.setItem(FONT_SIZE_STORAGE_KEY, sizeName);
+    } catch (error) {
+      console.error('Error saving font size:', error);
+    }
+  };
+
+  // Get scaled font size
+  const getFontSize = (baseSize) => {
+    const scale = fontSizeScales[selectedFontSize]?.scale || 1.0;
+    return Math.round(baseSize * scale);
+  };
+
   // Merge base colors with selected color theme
   const baseColors = isDarkMode ? darkBase : lightBase;
   const themeColors = colorThemes[selectedColorTheme] || colorThemes.purple;
@@ -267,6 +310,10 @@ export const ThemeProvider = ({ children }) => {
         selectedColorTheme,
         setColorTheme,
         colorThemes,
+        selectedFontSize,
+        setFontSize,
+        getFontSize,
+        fontSizeScales,
       }}
     >
       {children}

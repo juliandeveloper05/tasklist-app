@@ -25,6 +25,10 @@ export default function CategoryFilter({ selected, onSelect }) {
       horizontal 
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
+      nestedScrollEnabled={true}
+      bounces={true}
+      alwaysBounceHorizontal={true}
+      style={styles.scrollView}
     >
       {Object.values(categories).map((category, index) => (
         <CategoryChip
@@ -89,10 +93,14 @@ function CategoryChip({ category, isSelected, onPress, delay, colors }) {
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flexGrow: 0,
+    flexShrink: 0,
+  },
   container: {
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.lg,
-    paddingEnd: spacing.xl, // Extra padding to ensure last button is fully visible
+    paddingEnd: spacing.xl,
     gap: spacing.sm,
     flexGrow: 0,
   },

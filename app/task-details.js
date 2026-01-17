@@ -18,6 +18,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp, FadeInRight, FadeIn, FadeOut } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Haptics from 'expo-haptics';
 
 import { TaskContext } from '../context/TaskContext';
@@ -25,7 +26,6 @@ import { useTheme } from '../context/ThemeContext';
 import { spacing, borderRadius, typography, categories, priorities } from '../constants/theme';
 import DatePickerButton from '../components/DatePickerButton';
 import ReminderToggle from '../components/ReminderToggle';
-import SubtaskItem from '../components/SubtaskItem';
 import DraggableSubtaskList from '../components/DraggableSubtaskList';
 import DiscardChangesModal from '../components/DiscardChangesModal';
 import SaveIndicator, { SAVE_STATES } from '../components/SaveIndicator';
@@ -383,7 +383,7 @@ export default function TaskDetails() {
   const priority = priorities[task.priority] || priorities.medium;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.bgPrimary }]}>
+    <GestureHandlerRootView style={[styles.container, { backgroundColor: colors.bgPrimary }]}>
       {/* Header */}
       <Animated.View 
         style={styles.header}
@@ -915,7 +915,7 @@ export default function TaskDetails() {
         onClose={() => setShowAttachmentViewer(false)}
         onDelete={handleAttachmentDelete}
       />
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
