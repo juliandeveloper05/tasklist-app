@@ -354,9 +354,9 @@ export default function Settings() {
         <SettingItem
           icon="download"
           iconColor={colors.categoryHealth}
-          title="Exportar datos"
-          subtitle="Descargar como archivo"
-          onPress={() => Alert.alert('Próximamente', 'Esta función estará disponible pronto.')}
+          title="Exportar / Importar datos"
+          subtitle="Respaldo y restauración de tareas"
+          onPress={() => router.push('/data-management')}
           delay={540}
           colors={colors}
         />

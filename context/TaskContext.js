@@ -6,6 +6,7 @@
 import React, { createContext, useState, useEffect, useCallback, useContext } from "react";
 import { Platform } from "react-native";
 import { loadTasks, saveTasks, loadRecurringSeries, saveRecurringSeries } from "../utils/storage";
+import { deleteFile } from "../utils/fileManager";
 import {
   requestNotificationPermissions,
   scheduleTaskDueDateNotification,
@@ -54,6 +55,7 @@ export const TaskProvider = ({ children }) => {
       const tasksWithDefaults = savedTasks.map(task => ({
         ...task,
         subtasks: task.subtasks || [],
+        attachments: task.attachments || [],
         isRecurring: task.isRecurring || false,
         recurringSeriesId: task.recurringSeriesId || null,
         instanceDate: task.instanceDate || null,
@@ -88,6 +90,7 @@ export const TaskProvider = ({ children }) => {
       notificationId: null,
       subtasks: task.subtasks || [],
       description: task.description || '',
+      attachments: task.attachments || [],
       isRecurring: false,
       recurringSeriesId: null,
       instanceDate: null,
@@ -304,6 +307,13 @@ export const TaskProvider = ({ children }) => {
       await cancelNotification(taskToDelete.notificationId);
     }
 
+    // Delete attachments if any
+    if (taskToDelete?.attachments?.length > 0) {
+      for (const attachment of taskToDelete.attachments) {
+        await deleteFile(attachment.localUri);
+      }
+    }
+
     setTasks((prev) => prev.filter((task) => task.id !== id));
   }, [tasks]);
 
@@ -505,6 +515,56 @@ export const TaskProvider = ({ children }) => {
     );
   }, []);
 
+  /**
+   * Add an attachment to a task
+   */
+  const addAttachment = useCallback((taskId, attachment) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? { 
+              ...task, 
+              attachments: [...(task.attachments || []), attachment],
+              updatedAt: new Date().toISOString(),
+            }
+          : task
+      )
+    );
+  }, []);
+
+  /**
+   * Delete an attachment from a task
+   */
+  const deleteAttachment = useCallback(async (taskId, attachmentId) => {
+    const task = tasks.find((t) => t.id === taskId);
+    const attachment = task?.attachments?.find((a) => a.id === attachmentId);
+    
+    // Delete the file
+    if (attachment?.localUri) {
+      await deleteFile(attachment.localUri);
+    }
+
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              attachments: (task.attachments || []).filter((a) => a.id !== attachmentId),
+              updatedAt: new Date().toISOString(),
+            }
+          : task
+      )
+    );
+  }, [tasks]);
+
+  /**
+   * Get attachments for a task
+   */
+  const getAttachments = useCallback((taskId) => {
+    const task = tasks.find((t) => t.id === taskId);
+    return task?.attachments || [];
+  }, [tasks]);
+
   return (
     <TaskContext.Provider
       value={{ 
@@ -532,6 +592,10 @@ export const TaskProvider = ({ children }) => {
         updateSubtask,
         reorderSubtasks,
         getSubtaskProgress,
+        // Attachment methods
+        addAttachment,
+        deleteAttachment,
+        getAttachments,
         loading,
         notificationsEnabled,
       }}

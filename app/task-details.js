@@ -31,6 +31,10 @@ import DiscardChangesModal from '../components/DiscardChangesModal';
 import SaveIndicator, { SAVE_STATES } from '../components/SaveIndicator';
 import TaskDescriptionEditor from '../components/TaskDescriptionEditor';
 import RecurringActionModal from '../components/RecurringActionModal';
+import AttachmentGallery from '../components/AttachmentGallery';
+import AttachmentPicker from '../components/AttachmentPicker';
+import AttachmentViewer from '../components/AttachmentViewer';
+import { useFilePicker } from '../hooks/useFilePicker';
 import { formatRelativeTime } from '../utils/dateHelpers';
 import { useHistory, useUndoRedoKeyboard } from '../hooks/useHistory';
 
@@ -67,8 +71,12 @@ export default function TaskDetails() {
     getAffectedCount,
     skipRecurringInstance,
     unskipRecurringInstance,
+    // Attachment methods
+    addAttachment,
+    deleteAttachment,
   } = useContext(TaskContext);
   const { colors } = useTheme();
+  const { pickImage, takePhoto, pickDocument, isLoading: isFilePicking } = useFilePicker();
   
   // Find the task
   const task = tasks.find(t => t.id === taskId);
@@ -96,6 +104,11 @@ export default function TaskDetails() {
   const [showRecurringModal, setShowRecurringModal] = useState(false);
   const [recurringAction, setRecurringAction] = useState('delete'); // 'delete' or 'edit'
   const [recurringCounts, setRecurringCounts] = useState({ this: 1, future: 1, all: 1 });
+  
+  // Attachment state
+  const [showAttachmentPicker, setShowAttachmentPicker] = useState(false);
+  const [showAttachmentViewer, setShowAttachmentViewer] = useState(false);
+  const [selectedAttachment, setSelectedAttachment] = useState(null);
   
   // History for undo/redo
   const history = useHistory({ title: '', description: '', category: 'personal', priority: 'medium' });
@@ -303,6 +316,48 @@ export default function TaskDetails() {
       await skipRecurringInstance(taskId);
     }
     safeHaptics.notification(Haptics.NotificationFeedbackType.Success);
+  };
+
+  // Attachment handlers
+  const handleAddAttachment = () => {
+    setShowAttachmentPicker(true);
+  };
+
+  const handlePickImage = async () => {
+    const attachment = await pickImage(taskId);
+    if (attachment) {
+      addAttachment(taskId, attachment);
+      safeHaptics.notification(Haptics.NotificationFeedbackType.Success);
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    const attachment = await takePhoto(taskId);
+    if (attachment) {
+      addAttachment(taskId, attachment);
+      safeHaptics.notification(Haptics.NotificationFeedbackType.Success);
+    }
+  };
+
+  const handlePickDocument = async () => {
+    const attachment = await pickDocument(taskId);
+    if (attachment) {
+      addAttachment(taskId, attachment);
+      safeHaptics.notification(Haptics.NotificationFeedbackType.Success);
+    }
+  };
+
+  const handleAttachmentPress = (attachment) => {
+    setSelectedAttachment(attachment);
+    setShowAttachmentViewer(true);
+  };
+
+  const handleAttachmentDelete = async (attachment) => {
+    await deleteAttachment(taskId, attachment.id);
+    safeHaptics.notification(Haptics.NotificationFeedbackType.Success);
+    if (showAttachmentViewer) {
+      setShowAttachmentViewer(false);
+    }
   };
 
   const handleToggleComplete = () => {
@@ -647,6 +702,20 @@ export default function TaskDetails() {
           />
         </Animated.View>
 
+        {/* Attachments Section */}
+        <Animated.View 
+          style={styles.section}
+          entering={FadeInUp.delay(188).springify()}
+        >
+          <AttachmentGallery
+            attachments={task.attachments || []}
+            onAttachmentPress={handleAttachmentPress}
+            onAttachmentDelete={handleAttachmentDelete}
+            onAddPress={handleAddAttachment}
+            editable={!task.completed}
+          />
+        </Animated.View>
+
         {/* Category Selection */}
         <Animated.View 
           style={styles.section}
@@ -826,6 +895,25 @@ export default function TaskDetails() {
         onConfirm={handleRecurringConfirm}
         action={recurringAction}
         counts={recurringCounts}
+      />
+
+      {/* Attachment Picker Modal */}
+      <AttachmentPicker
+        visible={showAttachmentPicker}
+        onClose={() => setShowAttachmentPicker(false)}
+        onPickImage={handlePickImage}
+        onTakePhoto={handleTakePhoto}
+        onPickDocument={handlePickDocument}
+        isLoading={isFilePicking}
+      />
+
+      {/* Attachment Viewer Modal */}
+      <AttachmentViewer
+        visible={showAttachmentViewer}
+        attachment={selectedAttachment}
+        attachments={task.attachments || []}
+        onClose={() => setShowAttachmentViewer(false)}
+        onDelete={handleAttachmentDelete}
       />
     </View>
   );
