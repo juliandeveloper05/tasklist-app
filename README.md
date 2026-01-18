@@ -2,109 +2,61 @@
 
 > **Version 2.3** - Authentication & Cloud Sync Update
 
-A modern, feature-rich task management application built with React Native and Expo. Designed with premium glassmorphism aesthetics and a focus on user experience.
+A modern, scalable **SaaS MVP** (Minimum Viable Product) for task management built with React Native and Expo. Designed with premium glassmorphism aesthetics, this project is architected to support both **B2C** (Personal Productivity) and future **B2B** (Team Collaboration) scalability.
 
 ![Status](https://img.shields.io/badge/status-active-success)
 ![React Native](https://img.shields.io/badge/React%20Native-0.76.6-blue)
 ![Expo](https://img.shields.io/badge/Expo-~52.0-000020?logo=expo)
 ![Supabase](https://img.shields.io/badge/Supabase-Auth%20%26%20Sync-3ECF8E?logo=supabase)
 
+## 🚀 Project Overview
+
+Bitrova is a **cloud-native** application that bridges the gap between simple to-do lists and complex project management tools. Currently operating as a B2C product for personal organization, its underlying architecture is built with **multi-tenancy principles** in mind, allowing for a seamless transition to a B2B SaaS model for team collaboration.
+
 ## ✨ Key Features
 
-### 🔐 Authentication (NEW!)
-- **Supabase Integration** - Secure authentication with email/password
-- **User Registration** - Create new accounts with email validation
-- **Login System** - Secure sign-in with session management
-- **Forgot Password** - Email-based password reset functionality
-- **AuthContext** - Global authentication state management
-- **Protected Routes** - Secure access to app features
+### 🔐 Authentication & Security
+- **Supabase Integration** - Secure enterprise-grade authentication with email/password.
+- **Session Management** - Persistent login states with secure token handling and auto-refresh.
+- **Row Level Security (RLS)** - Data isolation architecture ready for future multi-tenancy scaling.
+- **Protected Routes** - Secure access control ensuring data privacy.
 
-### ☁️ Cloud Backup & Sync (NEW!)
-- **Real-time Sync** - Automatic synchronization across devices
-- **Cloud Backup** - Manual and automatic backup options
-- **Sync Status Indicators** - Visual feedback for sync state
-- **Offline Support** - Local storage with sync when online
-- **Data Recovery** - Restore tasks from cloud backups
+### ☁️ Cloud Architecture (SaaS Core)
+- **Real-time Sync** - WebSocket-based synchronization across devices (iOS, Android, Web).
+- **Cloud Backup** - Automated data persistence strategy ensuring zero data loss.
+- **Offline-First** - Local database (AsyncStorage) with conflict resolution upon reconnection.
+- **Data Recovery** - Robust restoration protocols for user peace of mind.
 
 ### 🎨 Design & UI
-- **Glassmorphism Design** - Modern frosted glass aesthetic with blur effects
-- **GlassCard Component** - Reusable glassmorphism container
-- **Dark/Light Theme** - Seamless theme switching with persistent preference
-- **Smooth Animations** - Powered by React Native Reanimated for 60fps interactions
-- **Responsive Layout** - Optimized for iOS, Android, and Web platforms
-- **Custom Font Sizes** - Adjustable text size (Small/Medium/Large) for tasks
-- **InputField Component** - Reusable input with validation states
+- **Glassmorphism Design** - specific modern UI with frosted glass effects and blur intensity control.
+- **GlassCard Component** - Custom reusable container for consistent aesthetics.
+- **Theme Engine** - Seamless Dark/Light mode switching with persistent user preference.
+- **Smooth Animations** - Powered by **React Native Reanimated 3** for 60fps interactions.
+- **Responsive Layout** - Optimized UI for diverse form factors (Mobile & Web).
 
-### 📝 Task Management
-- **Smart Categories** - Organize tasks by Work, Personal, Shopping, Health
-- **Priority Levels** - High, Medium, Low priority with visual indicators
-- **Due Dates** - Set deadlines with calendar picker and overdue alerts
-- **Quick Actions** - Swipe-to-delete gesture for efficient task removal
-- **Completion Tracking** - Toggle tasks with animated checkboxes
+### � Recurring Tasks Engine
+- **Complex Patterns** - Supports Daily, Weekly (specific days), Monthly, and Custom intervals.
+- **Series Management** - Advanced logic to handle recurring series vs. individual instances.
+- **Scoped Actions** - Ability to edit/delete a single instance, future events, or the entire series.
+- **Smart Notifications** - CRON-like scheduling for local push notifications.
 
-### 📎 Attachments
-- **Image Attachments** - Add photos to tasks
-- **Attachment Picker** - Improved UI with visible controls
-- **Attachment Gallery** - View all task attachments
-- **Attachment Viewer** - Full-screen attachment preview
-
-### 🔄 Recurring Tasks
-- **Flexible Patterns** - Daily, Weekly, Monthly, or Custom recurrence
-- **Day Selection** - Choose specific days of the week for weekly tasks
-- **Frequency Control** - Set "every X days/weeks/months"
-- **Series Management** - View and manage all instances of a recurring series
-- **Scoped Actions** - Edit/delete single instance, future, or entire series
-- **Skip Instances** - Skip individual occurrences without deleting
-- **Auto-Generation** - Instances generated automatically for next 30 days
-- **Smart Notifications** - Automatic notification scheduling per instance
-- **Statistics** - Completion rate and breakdown in stats screen
-
-### ✏️ Advanced Editing
-- **Unsaved Changes Protection** - Modal confirmation when navigating away
-- **Field Validation** - Real-time title validation with error feedback
-- **Save State Indicator** - Visual feedback (saving, success, error)
-- **Description/Notes** - Multiline text with 500 character counter
-- **Inline Subtask Editing** - Double-tap to edit subtasks inline
-- **Drag & Drop Subtasks** - Long-press and drag to reorder
-- **Undo/Redo** - Header buttons + keyboard shortcuts (Ctrl+Z/Y)
-- **Auto-Save** - Optional debounced auto-save (configurable in settings)
-- **Modification History** - "Modified X ago" timestamp display
-
-### 📋 Subtasks
-- **Nested Tasks** - Break down tasks into manageable subtasks
-- **Progress Tracking** - Visual progress bar for subtask completion
-- **Inline Editing** - Double-tap to edit, Enter to save
-- **Reorderable** - Drag and drop to reorganize
-
-### 🔔 Notifications
-- **Local Reminders** - Get notified at 9:00 AM on task due dates
-- **Smart Scheduling** - Automatic notification management
-- **Permission Handling** - Graceful permission requests
-
-### 🔍 Search & Filter
-- **Real-time Search** - Find tasks instantly by title
-- **Category Filters** - View tasks by specific categories
-- **Completion Status** - Separate views for pending and completed
-
-### 📊 Statistics
-- **Progress Tracking** - Visual completion rate with circular indicator
-- **Task Analytics** - Overview of completed, pending, and urgent tasks
-- **Category Insights** - Task distribution across categories
-- **Recurring Stats** - Series count, completion rate, and instance breakdown
+### 📝 Core Productivity
+- **Smart Categories** - Dynamic filtering (Work, Personal, Health, Shopping).
+- **Attachments System** - Image upload and gallery view using Supabase Storage buckets.
+- **Subtasks & Nesting** - Drag-and-drop support for breaking down complex tasks.
+- **Advanced Editing** - Inline editing, undo/redo history stack, and auto-save protection.
 
 ## 🛠️ Tech Stack
 
 | Technology | Purpose |
 |------------|---------|
-| React Native | Cross-platform framework |
-| Expo (v52) | Development toolchain |
-| Expo Router | File-based navigation |
-| React Context | State management |
-| Supabase | Authentication & cloud sync |
-| Reanimated 3 | Animations |
-| Gesture Handler | Touch gestures |
-| AsyncStorage | Persistent storage |
-| Expo Notifications | Local reminders |
+| **React Native** | Cross-platform mobile framework |
+| **Expo (v52)** | Development toolchain & build system |
+| **Supabase** | Backend-as-a-Service (PostgreSQL, Auth, Realtime) |
+| **Expo Router** | File-based routing & navigation |
+| **React Context** | Global state management |
+| **Reanimated 3** | High-performance declarative animations |
+| **AsyncStorage** | Local persistence & offline caching |
 
 ## 📦 Installation
 
@@ -139,101 +91,89 @@ npx expo start --web
 
 ```
 tasklist-app/
-├── app/                      # Expo Router screens
-│   ├── index.js             # Home screen
-│   ├── auth.js              # Authentication screen (login/register)
-│   ├── add-task.js          # Add task modal
-│   ├── task-details.js      # Task details & editing
-│   ├── cloud-backup.js      # Cloud backup management
-│   └── settings.js          # App settings
-├── components/              # Reusable components
-│   ├── TaskCard.js          # Task item card
-│   ├── GlassCard.js         # Glassmorphism container
-│   ├── InputField.js        # Input with validation
-│   ├── AttachmentPicker.js  # File attachment picker
-│   ├── AttachmentGallery.js # Attachment grid view
-│   ├── SubtaskItem.js       # Subtask with inline edit
-│   ├── DraggableSubtaskList.js # Drag & drop subtasks
-│   ├── DiscardChangesModal.js  # Unsaved changes modal
-│   ├── SaveIndicator.js     # Save state feedback
-│   └── ...
-├── context/                 # React Context providers
-│   ├── TaskContext.js       # Task state & methods
-│   ├── ThemeContext.js      # Theme management
-│   └── AuthContext.js       # Authentication state
-├── config/                  # Configuration
-│   └── supabase.js          # Supabase client setup
-├── services/                # Business logic services
-│   ├── cloudSyncService.js  # Real-time sync
-│   ├── backupService.js     # Backup operations
-│   └── exportService.js     # Data export
-├── hooks/                   # Custom hooks
-│   ├── useAutoSave.js       # Debounced auto-save
-│   ├── useHistory.js        # Undo/redo stack
-│   └── useCloudSync.js      # Cloud sync hook
-├── utils/                   # Utilities
-│   ├── storage.js           # AsyncStorage helpers
-│   ├── notifications.js     # Notification service
-│   └── dateHelpers.js       # Date formatting
-├── theme/                   # Theme configuration
-│   └── colors.js            # Color palette
-└── constants/               # Configuration
-    └── theme.js             # Design tokens
+├── app/                      # Expo Router screens (Auth, Home, Settings)
+├── components/               # Reusable UI (GlassCard, TaskItem, Inputs)
+├── context/                  # Global State (AuthContext, TaskContext)
+├── config/                   # External services setup (Supabase)
+├── services/                 # Business Logic (Sync, Backup, Exports)
+├── hooks/                    # Custom Hooks (useCloudSync, useHistory)
+├── utils/                    # Helpers (Date formatting, Storage)
+└── theme/                    # Design tokens & Color palettes
 ```
 
-## 🗺️ Roadmap
+## 🗺️ Roadmap & Future Development
 
 ### ✅ Phase 1: Core Features (Complete)
-- [x] Basic task CRUD operations
-- [x] Category system
-- [x] Priority levels
-- [x] Dark/Light theme
-- [x] Local notifications
-- [x] Search functionality
-- [x] Task editing improvements
-- [x] Subtasks support
+- [x] Basic task CRUD operations.
+- [x] Category system & Priority levels.
+- [x] Dark/Light theme engine.
+- [x] Local notifications.
+- [x] Search & filter functionality.
+- [x] Subtasks with progress tracking.
+- [x] Swipe-to-delete gestures.
 
-### ✅ Phase 2: Enhanced Features (Complete)
-- [x] Recurring tasks with patterns (daily, weekly, monthly, custom)
-- [x] Series management (view, edit, delete with scope)
-- [x] Skip/unskip instances
-- [x] Recurring task statistics
-- [x] Authentication system (Supabase)
-- [x] Cloud backup & sync
-- [x] Attachments (images)
-- [x] Custom font size settings
-- [x] GlassCard & InputField components
-- [ ] Export/Import data (JSON, CSV)
-- [ ] Task sharing
+### ✅ Phase 2: Enhanced SaaS Features (Complete)
+- [x] Recurring tasks engine (CRON-like patterns).
+- [x] Supabase Authentication System.
+- [x] Real-time Cloud Sync & Backup.
+- [x] Attachments handling (Storage Buckets).
+- [x] Glassmorphism UI Polish.
+- [x] Undo/Redo history stack.
+- [x] Auto-save with debouncing.
+- [x] Custom font size settings.
+- [x] Password reset flow.
 
-### 📋 Phase 3: Advanced Features (Planned)
-- [ ] Collaboration features
-- [ ] Calendar view
-- [ ] Time tracking
-- [ ] Productivity analytics
-- [ ] Widgets support
-- [ ] Voice input
-- [ ] AI-powered suggestions
+### 🚀 Phase 3: B2B Pivot & Scalability (Planned)
+Transitioning from single-user B2C to Team-based B2B architecture.
+- [ ] **Multi-tenancy Support**: Logic to separate data by "Organizations" or "Teams".
+- [ ] **Team Workspaces**: Shared task lists and project boards (Kanban view).
+- [ ] **RBAC (Role-Based Access Control)**: Admin, Editor, and Viewer roles.
+- [ ] **Real-time Collaboration**: Live typing indicators and concurrent editing (CRDTs).
+- [ ] **Team Invitations**: Email-based invite system with role assignment.
+- [ ] **Activity Feed**: Team-wide activity log and notifications.
+- [ ] **Comments & Mentions**: @mention teammates on tasks.
 
-### 🎯 Phase 4: Polish & Optimization
-- [ ] Performance optimizations
-- [ ] Accessibility (WCAG compliance)
-- [ ] Comprehensive testing
-- [ ] Internationalization (i18n)
-- [ ] App Store deployment
+### 💰 Phase 4: Monetization & Analytics
+- [ ] **Subscription Infrastructure**: Integration with Stripe/RevenueCat.
+- [ ] **Freemium Logic**: Gate features based on subscription tier (Free vs. Pro vs. Enterprise).
+- [ ] **Usage Quotas**: Task limits, storage limits per tier.
+- [ ] **Advanced Analytics**: Productivity insights dashboard for teams.
+- [ ] **AI Integration**: LLM-based task prioritization and auto-suggestions.
+- [ ] **Smart Due Dates**: AI-powered deadline recommendations.
+- [ ] **Weekly Reports**: Email summaries of productivity metrics.
+
+### 📱 Phase 5: Platform Expansion
+- [ ] **Calendar View**: Visual calendar for task scheduling.
+- [ ] **Widgets Support**: Home screen widgets (iOS & Android).
+- [ ] **Apple Watch / Wear OS**: Quick task capture on wearables.
+- [ ] **Desktop Apps**: Native macOS & Windows apps via Electron/Tauri.
+- [ ] **Browser Extension**: Quick capture from any webpage.
+- [ ] **Voice Input**: Hands-free task creation via speech recognition.
+- [ ] **Siri/Google Assistant**: Voice command integrations.
+
+### 🏢 Phase 6: Enterprise Features
+- [ ] **SSO (Single Sign-On)**: SAML, OAuth2, OpenID Connect.
+- [ ] **Audit Logs**: Compliance-ready activity tracking.
+- [ ] **Custom Domains**: White-label branding options.
+- [ ] **API Access**: RESTful API for third-party integrations.
+- [ ] **Webhooks**: Event-driven automation hooks.
+- [ ] **Data Export**: Bulk export (JSON, CSV, PDF).
+- [ ] **SLA & Priority Support**: Dedicated enterprise support tiers.
+
+### 🎯 Phase 7: Polish & Optimization
+- [ ] **Performance Optimizations**: Lazy loading, virtualized lists.
+- [ ] **Accessibility (WCAG)**: Full screen reader support.
+- [ ] **Internationalization (i18n)**: Multi-language support.
+- [ ] **Comprehensive Testing**: Unit, integration, and E2E tests.
+- [ ] **App Store Deployment**: iOS App Store & Google Play releases.
+- [ ] **CI/CD Pipeline**: Automated builds and deployments.
 
 ## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the MIT License.
 
 ## 👨‍💻 Author
-
-**Julian Javier Soto**
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/full-stack-julian-soto/)
-[![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=flat&logo=instagram&logoColor=white)](https://www.instagram.com/palee_0x71/?hl=es-la)
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/juliandeveloper05)
+Julian Javier Soto
 
 ---
 
-⭐ If you found this project interesting, feel free to star it!
+⭐ SaaS MVP Concept - Ready for scalability. If you found this project interesting, feel free to star the repo!
